@@ -141,7 +141,7 @@ async function loadLazy(doc) {
   const loadExperimentationSidekick = () => {
     import('../tools/sidekick/aem-experimentation.js');
   };
-  
+
   if (document.querySelector('helix-sidekick, aem-sidekick')) {
     loadExperimentationSidekick();
   } else {
