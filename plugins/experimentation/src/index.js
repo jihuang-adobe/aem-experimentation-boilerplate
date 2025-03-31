@@ -970,18 +970,63 @@ export async function loadEager(document, options = {}) {
   ns.campaign = ns.campaigns.find((e) => e.type === 'page');
 }
 
-export async function loadLazy(document, options = {}) {
-  const pluginOptions = { ...DEFAULT_OPTIONS, ...options };
-  // do not show the experimentation pill on prod domains
+export async function loadLazy() {
   if (!isDebugEnabled) {
     return;
   }
-  // eslint-disable-next-line import/no-unresolved
-  const preview = await import('https://opensource.adobe.com/aem-experimentation/preview.js');
-  const context = {
-    getMetadata,
-    toClassName,
-    debug,
-  };
-  preview.default.call(context, document, pluginOptions);
+  window.addEventListener('message', async (event) => {
+    // Handle Last-Modified request
+    if (event.data && event.data.type === 'hlx:last-modified-request') {
+      const url = event.data.url;
+
+      try {
+        const response = await fetch(url, {
+          method: 'HEAD',
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        });
+
+        const lastModified = response.headers.get('Last-Modified');
+        console.log('Last-Modified header for', url, ':', lastModified);
+
+        event.source.postMessage(
+          {
+            type: 'hlx:last-modified-response',
+            url: url,
+            lastModified: lastModified,
+            status: response.status,
+          },
+          event.origin
+        );
+      } catch (error) {
+        console.error('Error fetching Last-Modified header:', error);
+      }
+    }
+    // Handle experimentation config request
+    else if (event.data?.type === 'hlx:experimentation-get-config') {
+      try {
+        const safeClone = JSON.parse(JSON.stringify(window.hlx));
+
+        event.source.postMessage(
+          {
+            type: 'hlx:experimentation-config',
+            config: safeClone,
+            source: 'index-js',
+          },
+          '*'
+        );
+      } catch (e) {
+        console.error('Error sending hlx config:', e);
+      }
+    }
+    // Handle window reload request
+    else if (
+      event.data?.type === 'hlx:experimentation-window-reload' &&
+      event.data?.action === 'reload'
+    ) {
+      window.location.reload();
+    }
+  });
 }
