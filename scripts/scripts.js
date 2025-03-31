@@ -11,10 +11,10 @@ import {
   loadSection,
   loadSections,
   loadCSS,
-} from "./aem.js";
+} from './aem.js';
 
 const experimentationConfig = {
-  prodHost: "www.my-site.com",
+  prodHost: 'www.my-site.com',
   audiences: {
     mobile: () => window.innerWidth < 600,
     desktop: () => window.innerWidth >= 600,
@@ -24,16 +24,13 @@ const experimentationConfig = {
 
 let runExperimentation;
 let showExperimentationOverlay;
-const isExperimentationEnabled =
-  document.head.querySelector(
-    '[name^="experiment"],[name^="campaign-"],[name^="audience-"],[property^="campaign:"],[property^="audience:"]'
-  ) ||
-  [...document.querySelectorAll(".section-metadata div")].some((d) =>
-    d.textContent.match(/Experiment|Campaign|Audience/i)
-  );
+const isExperimentationEnabled = document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"],[property^="campaign:"],[property^="audience:"]')
+    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i));
 if (isExperimentationEnabled) {
-  ({ loadEager: runExperimentation, loadLazy: showExperimentationOverlay } =
-    await import("../plugins/experimentation/src/index.js"));
+  ({
+    loadEager: runExperimentation,
+    loadLazy: showExperimentationOverlay,
+  } = await import('../plugins/experimentation/src/index.js'));
 }
 
 /**
@@ -41,16 +38,12 @@ if (isExperimentationEnabled) {
  * @param {Element} main The container element
  */
 function buildHeroBlock(main) {
-  const h1 = main.querySelector("h1");
-  const picture = main.querySelector("picture");
+  const h1 = main.querySelector('h1');
+  const picture = main.querySelector('picture');
   // eslint-disable-next-line no-bitwise
-  if (
-    h1 &&
-    picture &&
-    h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING
-  ) {
-    const section = document.createElement("div");
-    section.append(buildBlock("hero", { elems: [picture, h1] }));
+  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+    const section = document.createElement('div');
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
   }
 }
@@ -61,8 +54,7 @@ function buildHeroBlock(main) {
 async function loadFonts() {
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
-    if (!window.location.hostname.includes("localhost"))
-      sessionStorage.setItem("fonts-loaded", "true");
+    if (!window.location.hostname.includes('localhost')) sessionStorage.setItem('fonts-loaded', 'true');
   } catch (e) {
     // do nothing
   }
@@ -77,7 +69,7 @@ function buildAutoBlocks(main) {
     buildHeroBlock(main);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error("Auto Blocking failed", error);
+    console.error('Auto Blocking failed', error);
   }
 }
 
@@ -100,23 +92,23 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = "en";
+  document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
   if (runExperimentation) {
     await runExperimentation(document, experimentationConfig);
   }
 
-  const main = doc.querySelector("main");
+  const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    document.body.classList.add("appear");
-    await loadSection(main.querySelector(".section"), waitForFirstImage);
+    document.body.classList.add('appear');
+    await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
 
   try {
     /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */
-    if (window.innerWidth >= 900 || sessionStorage.getItem("fonts-loaded")) {
+    if (window.innerWidth >= 900 || sessionStorage.getItem('fonts-loaded')) {
       loadFonts();
     }
   } catch (e) {
@@ -129,15 +121,15 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
-  const main = doc.querySelector("main");
+  const main = doc.querySelector('main');
   await loadSections(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector("header"));
-  loadFooter(doc.querySelector("footer"));
+  loadHeader(doc.querySelector('header'));
+  loadFooter(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -147,15 +139,13 @@ async function loadLazy(doc) {
   }
 
   const loadExperimentationSidekick = () => {
-    import("../tools/sidekick/aem-experimentation.js");
+    import('../tools/sidekick/aem-experimentation.js');
   };
-
-  if (document.querySelector("helix-sidekick, aem-sidekick")) {
+  
+  if (document.querySelector('helix-sidekick, aem-sidekick')) {
     loadExperimentationSidekick();
   } else {
-    document.addEventListener("sidekick-ready", loadExperimentationSidekick, {
-      once: true,
-    });
+    document.addEventListener('sidekick-ready', loadExperimentationSidekick, { once: true });
   }
 }
 
@@ -165,7 +155,7 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
-  window.setTimeout(() => import("./delayed.js"), 3000);
+  window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
 
