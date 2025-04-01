@@ -14,18 +14,9 @@ import {
 } from './aem.js';
 
 import {
-  loadEager as loadExperimentationEager,
-  loadLazy as loadExperimentationLazy,
+  loadExperimentationEager,
+  loadExperimentationLazy,
 } from './experiment-loader.js';
-
-const experimentationConfig = {
-  prodHost: 'www.my-site.com',
-  audiences: {
-    mobile: () => window.innerWidth < 600,
-    desktop: () => window.innerWidth >= 600,
-    // define your custom audiences here as needed
-  },
-};
 
 /**
  * Builds hero block and prepends to main in a new section.
