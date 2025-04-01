@@ -7,7 +7,7 @@
           "en": "Experimentation"
         },
         "environments": [
-          "preview"
+          "preview", "live", "edit"
         ],
         "includePaths": [
           "**.docx**"
