@@ -228,20 +228,21 @@ function readBlockConfig(block) {
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
+ * @returns {Promise} A promise that resolves when the CSS is loaded
  */
-function loadCSS(href, callback) {
-  if (!document.querySelector(`head > link[href="${href}"]`)) {
-    const link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('href', href);
-    if (typeof callback === 'function') {
-      link.onload = (e) => callback(e.type);
-      link.onerror = (e) => callback(e.type);
+async function loadCSS(href) {
+  return new Promise((resolve, reject) => {
+    if (!document.querySelector(`head > link[href="${href}"]`)) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.onload = resolve;
+      link.onerror = reject;
+      document.head.append(link);
+    } else {
+      resolve();
     }
-    document.head.appendChild(link);
-  } else if (typeof callback === 'function') {
-    callback('noop');
-  }
+  });
 }
 
 /**
@@ -595,9 +596,7 @@ function getBlockConfig(block) {
  * @param {object[]} [args] Parameters to be passed to the default export when it is called
  */
 async function loadModule(name, jsPath, cssPath, ...args) {
-  const cssLoaded = cssPath
-    ? new Promise((resolve) => { loadCSS(cssPath, resolve); })
-    : Promise.resolve();
+  const cssLoaded = cssPath ? loadCSS(cssPath) : Promise.resolve();
   const decorationComplete = jsPath
     ? new Promise((resolve) => {
       (async () => {
@@ -624,9 +623,9 @@ async function loadModule(name, jsPath, cssPath, ...args) {
  * @param {Element} block The block element
  */
 async function loadBlock(block) {
-  const status = block.getAttribute('data-block-status');
+  const status = block.dataset.blockStatus;
   if (status !== 'loading' && status !== 'loaded') {
-    block.setAttribute('data-block-status', 'loading');
+    block.dataset.blockStatus = 'loading';
     const { blockName, cssPath, jsPath } = getBlockConfig(block);
     try {
       await loadModule(blockName, jsPath, cssPath, block);
@@ -634,7 +633,7 @@ async function loadBlock(block) {
       // eslint-disable-next-line no-console
       console.log(`failed to load block ${blockName}`, error);
     }
-    block.setAttribute('data-block-status', 'loaded');
+    block.dataset.blockStatus = 'loaded';
   }
 }
 
