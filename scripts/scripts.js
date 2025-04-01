@@ -13,6 +13,11 @@ import {
   loadCSS,
 } from './aem.js';
 
+import {
+  loadEager as loadExperimentationEager,
+  loadLazy as loadExperimentationLazy,
+} from './experiment-loader.js';
+
 const experimentationConfig = {
   prodHost: 'www.my-site.com',
   audiences: {
@@ -21,17 +26,6 @@ const experimentationConfig = {
     // define your custom audiences here as needed
   },
 };
-
-let runExperimentation;
-let showExperimentationOverlay;
-const isExperimentationEnabled = document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"],[property^="campaign:"],[property^="audience:"]')
-    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i));
-if (isExperimentationEnabled) {
-  ({
-    loadEager: runExperimentation,
-    loadLazy: showExperimentationOverlay,
-  } = await import('../plugins/experimentation/src/index.js'));
-}
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -95,9 +89,7 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
-  if (runExperimentation) {
-    await runExperimentation(document, experimentationConfig);
-  }
+  await loadExperimentationEager(document);
 
   const main = doc.querySelector('main');
   if (main) {
@@ -134,19 +126,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
-  if (showExperimentationOverlay) {
-    await showExperimentationOverlay(document, experimentationConfig);
-  }
-
-  const loadExperimentationSidekick = () => {
-    import('../tools/sidekick/aem-experimentation.js');
-  };
-
-  if (document.querySelector('helix-sidekick, aem-sidekick')) {
-    loadExperimentationSidekick();
-  } else {
-    document.addEventListener('sidekick-ready', loadExperimentationSidekick, { once: true });
-  }
+  await loadExperimentationLazy(document);
 }
 
 /**
