@@ -14,8 +14,8 @@ import {
 } from './aem.js';
 
 import {
-  loadExperimentationEager,
-  loadExperimentationLazy,
+  runExperimentation,
+  showExperimentationRail,
 } from './experiment-loader.js';
 
 /**
@@ -80,7 +80,7 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
-  await loadExperimentationEager(document);
+  await runExperimentation(document);
 
   const main = doc.querySelector('main');
   if (main) {
@@ -117,7 +117,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
-  await loadExperimentationLazy(document);
+  await showExperimentationRail(document);
 }
 
 /**

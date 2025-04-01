@@ -24,7 +24,7 @@ const isExperimentationEnabled = () => document.head.querySelector('[name^="expe
  * @param {Document} document The document object.
  * @returns {Promise<void>} A promise that resolves when the experimentation module is loaded.
  */
-export async function loadExperimentationEager(document) {
+export async function runExperimentation(document) {
   if (!isExperimentationEnabled()) {
     return null;
   }
@@ -46,7 +46,7 @@ export async function loadExperimentationEager(document) {
  * @param {Document} document The document object.
  * @returns {Promise<void>} A promise that resolves when the experimentation module is loaded.
  */
-export async function loadExperimentationLazy(document) {
+export async function showExperimentationRail(document) {
   if (!isExperimentationEnabled()) {
     return null;
   }
