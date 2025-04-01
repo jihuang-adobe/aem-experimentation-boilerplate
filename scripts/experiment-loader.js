@@ -15,11 +15,9 @@ const experimentationConfig = {
  * Checks if experimentation is enabled.
  * @returns {boolean} True if experimentation is enabled, false otherwise.
  */
-const isExperimentationEnabled = () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"],[property^="campaign:"],[property^="audience:"]') 
+const isExperimentationEnabled = () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"],[property^="campaign:"],[property^="audience:"]')
 || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i));
-  [...document.querySelectorAll('.section-metadata div')].some((d) =>
-    d.textContent.match(/Experiment|Campaign|Audience/i),
-  );
+[...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i),);
 
 /**
  * Loads the experimentation module (eager).
@@ -59,8 +57,7 @@ export async function loadExperimentationLazy(document) {
     );
     await loadLazy(document, experimentationConfig);
 
-    const loadSidekickHandler = () =>
-      import('../tools/sidekick/aem-experimentation.js');
+    const loadSidekickHandler = () => import('../tools/sidekick/aem-experimentation.js');
 
     if (document.querySelector('helix-sidekick, aem-sidekick')) {
       await loadSidekickHandler();
