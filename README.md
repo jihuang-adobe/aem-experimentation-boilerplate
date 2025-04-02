@@ -7,8 +7,8 @@ This is a boilerplate for AEM experimentation. It builds upon the [AEM Boilerpla
 
 ## Environments
 
-- Preview: https://main--aem-experimentation-boilerplate---adobe.aem.page/
-- Live: https://main--aem-experimentation-boilerplate---adobe.aem.live/
+- Preview: https://main--aem-experimentation-boilerplate--adobe.aem.page/
+- Live: https://main--aem-experimentation-boilerplate--adobe.aem.live/
 
 ## Documentation
 
