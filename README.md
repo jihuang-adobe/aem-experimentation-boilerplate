@@ -1,13 +1,19 @@
-# Your Project's Title...
-Your project's description...
+# AEM Experimentation Boilerplate
+
+This is a boilerplate for AEM experimentation. It builds upon the [AEM Boilerplate](https://github.com/adobe/aem-boilerplate) with these enhancements:
+
+- Integration of the updated Experimentation Engine (V2) - see https://github.com/adobe/aem-experimentation/pull/28
+- Sidekick configuration with the latest experimentation UI rail (Click the experimentation button on sidekick to see it.)
 
 ## Environments
-- Preview: https://main--{repo}--{owner}.aem.page/
-- Live: https://main--{repo}--{owner}.aem.live/
+
+- Preview: https://main--aem-experimentation-boilerplate---adobe.aem.page/
+- Live: https://main--aem-experimentation-boilerplate---adobe.aem.live/
 
 ## Documentation
 
 Before using the aem-boilerplate, we recommand you to go through the documentation on https://www.aem.live/docs/ and more specifically:
+
 1. [Developer Tutorial](https://www.aem.live/developer/tutorial)
 2. [The Anatomy of a Project](https://www.aem.live/developer/anatomy-of-a-project)
 3. [Web Performance](https://www.aem.live/developer/keeping-it-100)
