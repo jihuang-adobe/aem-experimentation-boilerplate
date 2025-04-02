@@ -1,17 +1,4 @@
 /**
- * Configuration for experimentation.
- * @type {Object}
- */
-const experimentationConfig = {
-  prodHost: 'www.my-site.com',
-  audiences: {
-    mobile: () => window.innerWidth < 600,
-    desktop: () => window.innerWidth >= 600,
-    // define your custom audiences here as needed
-  },
-};
-
-/**
  * Checks if experimentation is enabled.
  * @returns {boolean} True if experimentation is enabled, false otherwise.
  */
@@ -24,7 +11,7 @@ const isExperimentationEnabled = () => document.head.querySelector('[name^="expe
  * @param {Document} document The document object.
  * @returns {Promise<void>} A promise that resolves when the experimentation module is loaded.
  */
-export async function runExperimentation(document) {
+export async function runExperimentation(document, config) {
   if (!isExperimentationEnabled()) {
     return null;
   }
@@ -33,7 +20,7 @@ export async function runExperimentation(document) {
     const { loadEager } = await import(
       '../plugins/experimentation/src/index.js'
     );
-    return loadEager(document, experimentationConfig);
+    return loadEager(document, config);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Failed to load experimentation module (eager):', error);
@@ -55,7 +42,7 @@ export async function showExperimentationRail(document) {
     const { loadLazy } = await import(
       '../plugins/experimentation/src/index.js'
     );
-    await loadLazy(document, experimentationConfig);
+    await loadLazy();
 
     const loadSidekickHandler = () => import('../tools/sidekick/aem-experimentation.js');
 

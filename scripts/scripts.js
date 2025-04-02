@@ -18,6 +18,15 @@ import {
   showExperimentationRail,
 } from './experiment-loader.js';
 
+const experimentationConfig = {
+  prodHost: 'www.my-site.com',
+  audiences: {
+    mobile: () => window.innerWidth < 600,
+    desktop: () => window.innerWidth >= 600,
+    // define your custom audiences here as needed
+  },
+};
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -80,7 +89,7 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
-  await runExperimentation(document);
+  await runExperimentation(doc, experimentationConfig);
 
   const main = doc.querySelector('main');
   if (main) {
@@ -117,7 +126,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
-  await showExperimentationRail(document);
+  await showExperimentationRail(doc);
 }
 
 /**
