@@ -1,4 +1,3 @@
-/* eslint-disable */
 (function () {
   let isAEMExperimentationAppLoaded = false;
   let scriptLoadPromise = null;
@@ -26,9 +25,10 @@
         return;
       }
 
-      const script = document.createElement("script");
+      const script = document.createElement('script');
       script.src =
         'https://experience.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=plugin';
+
       script.onload = function () {
         isAEMExperimentationAppLoaded = true;
         const waitForContainer = (retries = 0, maxRetries = 20) => {
@@ -60,7 +60,7 @@
     if (experimentParam && !isHandlingSimulation) {
       const decodedParam = decodeURIComponent(experimentParam);
 
-      const [experimentId, variantId] = decodedParam.split("/");
+      const [experimentId, variantId] = decodedParam.split('/');
       if (experimentId && variantId) {
         isHandlingSimulation = true;
         loadAEMExperimentationApp()
@@ -96,6 +96,46 @@
       'custom:aem-experimentation-sidekick',
       handleSidekickPluginButtonClick
     );
+  } else {
+    document.addEventListener(
+      'sidekick-ready',
+      () => {
+        const sidekickElement = document.querySelector(
+          'helix-sidekick, aem-sidekick'
+        );
+        if (sidekickElement) {
+          sidekickElement.addEventListener(
+            'custom:aem-experimentation-sidekick',
+            handleSidekickPluginButtonClick
+          );
+        }
+      },
+      { once: true }
+    );
   }
-  checkExperimentParams();
+
+  // Check for experiment parameters on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkExperimentParams);
+  } else {
+    checkExperimentParams();
+  }
+
+  window.addEventListener('message', function (event) {
+    if (!event.data) return;
+
+    const shouldReload =
+      event.data.type === 'hlx:experimentation-window-reload' &&
+      event.data.action === 'reload';
+
+    if (shouldReload) {
+      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
+      window.location.reload();
+    }
+  });
+
+  if (sessionStorage.getItem('aem_experimentation_open_panel') === 'true') {
+    sessionStorage.removeItem('aem_experimentation_open_panel');
+    handleSidekickPluginButtonClick();
+  }
 })();

@@ -977,7 +977,7 @@ export async function loadLazy() {
 
   window.addEventListener('message', async (event) => {
     if (event.data && event.data.type === 'hlx:last-modified-request') {
-      const { url } = event.data;
+      const url = event.data.url;
 
       try {
         const response = await fetch(url, {
@@ -989,23 +989,22 @@ export async function loadLazy() {
         });
 
         const lastModified = response.headers.get('Last-Modified');
-        // eslint-disable-next-line no-console
-        console.log('Last-Modified header for', url, ':', lastModified);
 
         event.source.postMessage(
           {
             type: 'hlx:last-modified-response',
-            url,
-            lastModified,
+            url: url,
+            lastModified: lastModified,
             status: response.status,
           },
-          event.origin,
+          event.origin
         );
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching Last-Modified header:', error);
       }
-    } else if (event.data?.type === 'hlx:experimentation-get-config') {
+    }
+
+    else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
 
@@ -1015,17 +1014,11 @@ export async function loadLazy() {
             config: safeClone,
             source: 'index-js',
           },
-          '*',
+          '*'
         );
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
-    } else if (
-      event.data?.type === 'hlx:experimentation-window-reload'
-      && event.data?.action === 'reload'
-    ) {
-      window.location.reload();
     }
   });
 }
