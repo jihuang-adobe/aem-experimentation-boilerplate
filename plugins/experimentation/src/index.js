@@ -989,8 +989,6 @@ export async function loadLazy() {
         });
 
         const lastModified = response.headers.get('Last-Modified');
-        // eslint-disable-next-line no-console
-        console.log('Last-Modified header for', url, ':', lastModified);
 
         event.source.postMessage(
           {
@@ -1021,11 +1019,6 @@ export async function loadLazy() {
         // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
-    } else if (
-      event.data?.type === 'hlx:experimentation-window-reload'
-      && event.data?.action === 'reload'
-    ) {
-      window.location.reload();
     }
   });
 }
