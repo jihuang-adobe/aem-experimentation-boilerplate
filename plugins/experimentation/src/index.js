@@ -977,7 +977,7 @@ export async function loadLazy() {
 
   window.addEventListener('message', async (event) => {
     if (event.data && event.data.type === 'hlx:last-modified-request') {
-      const url = event.data.url;
+      const { url } = event.data;
 
       try {
         const response = await fetch(url, {
@@ -993,18 +993,17 @@ export async function loadLazy() {
         event.source.postMessage(
           {
             type: 'hlx:last-modified-response',
-            url: url,
-            lastModified: lastModified,
+            url,
+            lastModified,
             status: response.status,
           },
-          event.origin
+          event.origin,
         );
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching Last-Modified header:', error);
       }
-    }
-
-    else if (event.data?.type === 'hlx:experimentation-get-config') {
+    } else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
 
@@ -1014,9 +1013,10 @@ export async function loadLazy() {
             config: safeClone,
             source: 'index-js',
           },
-          '*'
+          '*',
         );
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
     }
