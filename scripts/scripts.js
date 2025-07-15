@@ -112,7 +112,7 @@ async function loadEager(doc) {
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
-async function loadLazy(doc, config) {
+async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadSections(main);
 
@@ -126,7 +126,7 @@ async function loadLazy(doc, config) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
-  await showExperimentationRail(doc, config);
+  await showExperimentationRail(doc, experimentationConfig);
 }
 
 /**
