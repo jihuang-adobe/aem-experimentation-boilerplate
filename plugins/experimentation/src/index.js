@@ -970,7 +970,7 @@ export async function loadEager(document, options = {}) {
   ns.campaign = ns.campaigns.find((e) => e.type === 'page');
 }
 
-export async function loadLazy() {
+export async function loadLazy(document, options = {}) {
   if (!isDebugEnabled) {
     return;
   }
