@@ -33,7 +33,7 @@ export async function runExperimentation(document, config) {
  * @param {Document} document The document object.
  * @returns {Promise<void>} A promise that resolves when the experimentation module is loaded.
  */
-export async function showExperimentationRail(document) {
+export async function showExperimentationRail(document, config) {
   if (!isExperimentationEnabled()) {
     return null;
   }
@@ -42,7 +42,7 @@ export async function showExperimentationRail(document) {
     const { loadLazy } = await import(
       '../plugins/experimentation/src/index.js'
     );
-    await loadLazy();
+    await loadLazy(document, config);
 
     const loadSidekickHandler = () => import('../tools/sidekick/aem-experimentation.js');
 

@@ -1007,6 +1007,10 @@ export async function loadLazy() {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
 
+        if (options.prodHost) {
+          safeClone.prodHost = options.prodHost;
+        }
+
         event.source.postMessage(
           {
             type: 'hlx:experimentation-config',
