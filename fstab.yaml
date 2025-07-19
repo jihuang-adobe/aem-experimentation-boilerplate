@@ -1,2 +1,5 @@
 mountpoints:
-  /: https://drive.google.com/drive/folders/17XTLsK-heXxeIq6DsVj4sE5f6cW-I2TN?usp=drive_link
+  /:
+    url: "https://author-p7716-e868301.adobeaemcloud.com/bin/franklin.delivery/jihuang-adobe/aem-experimentation/main"
+    type: "markup"
+    suffix: ".html"
