@@ -971,14 +971,15 @@ export async function loadEager(document, options = {}) {
 }
 
 export async function loadLazy(document, options = {}) {
+  // do not show the experimentation pill on prod domains
   if (!isDebugEnabled) {
     return;
   }
-
+ 
   window.addEventListener('message', async (event) => {
     if (event.data && event.data.type === 'hlx:last-modified-request') {
       const { url } = event.data;
-
+ 
       try {
         const response = await fetch(url, {
           method: 'HEAD',
@@ -987,9 +988,9 @@ export async function loadLazy(document, options = {}) {
             'Cache-Control': 'no-cache',
           },
         });
-
+ 
         const lastModified = response.headers.get('Last-Modified');
-
+ 
         event.source.postMessage(
           {
             type: 'hlx:last-modified-response',
@@ -1006,11 +1007,9 @@ export async function loadLazy(document, options = {}) {
     } else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-
         if (options.prodHost) {
           safeClone.prodHost = options.prodHost;
         }
-
         event.source.postMessage(
           {
             type: 'hlx:experimentation-config',
@@ -1023,6 +1022,11 @@ export async function loadLazy(document, options = {}) {
         // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
+    } else if (
+      event.data?.type === 'hlx:experimentation-window-reload'
+      && event.data?.action === 'reload'
+    ) {
+      window.location.reload();
     }
   });
 }
